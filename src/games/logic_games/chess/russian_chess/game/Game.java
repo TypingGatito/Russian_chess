@@ -136,7 +136,6 @@ public class Game {
 
         //сходили. следующий игрок
         chosenFigure = null;
-        nextTeam();
 
         gameAct.step(curStep);
         stepsForward.push(curStep);
@@ -151,6 +150,7 @@ public class Game {
                 stepsForSave.clear();
             }
         }
+        nextTeam();
         return true;
     }
 
@@ -193,11 +193,6 @@ public class Game {
         if (indexOfCurTeam == teams.size() - 1) indexOfCurTeam = 0;
         else indexOfCurTeam++;
         curTeam = teams.get(indexOfCurTeam);
-
-//        if (!containsKing(curTeam.curPlayer().getChessSet())) {
-//            if (!(curTeam.curPlayer().getChessSet().size() == 0))
-//                removeFiguresForPlayer(curTeam.curPlayer());
-//        }
 
 
         if (curTeam.curPlayer().getChessSet().size() == 0) {
