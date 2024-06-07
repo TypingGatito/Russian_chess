@@ -1,6 +1,7 @@
 package games.logic_games.chess.russian_chess.game.gameutils;
 
 import games.logic_games.chess.russian_chess.enums.ChessColour;
+import games.logic_games.chess.russian_chess.enums.ChessFigureName;
 import games.logic_games.chess.russian_chess.game.Game;
 import games.logic_games.chess.russian_chess.game.Team;
 import games.logic_games.chess.russian_chess.game.chesssituations.Castling;
@@ -10,9 +11,7 @@ import games.logic_games.chess.russian_chess.chess.chessfigures.ChessFigure;
 import games.logic_games.chess.russian_chess.enums.MoveDirection;
 import games.logic_games.chess.russian_chess.game.Player;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class GameAct {
     private Game game;
@@ -63,10 +62,31 @@ public class GameAct {
 
         if (step.getBeatenFigure() == null) return;
         //delete figure from maps
-        figureCell.remove(step.getBeatenFigure());
-        Player player = figurePlayer.get(step.getBeatenFigure());
-        player.getChessSet().remove(step.getBeatenFigure());
-        figurePlayer.remove(step.getBeatenFigure());
+        ChessFigure beatenFigure = step.getBeatenFigure();
+
+        if (beatenFigure != null) {
+            if (beatenFigure.getName() == ChessFigureName.KING) {
+                figureCell.remove(step.getBeatenFigure());
+                removeFiguresForPlayer(figurePlayer.get(beatenFigure));
+            } else {
+                figureCell.remove(step.getBeatenFigure());
+                Player player = figurePlayer.get(step.getBeatenFigure());
+                player.getChessSet().remove(step.getBeatenFigure());
+                figurePlayer.remove(step.getBeatenFigure());
+            }
+        }
+    }
+    private void removeFiguresForPlayer (Player player) {
+        Set<ChessFigure> set = new HashSet<>(figureCell.keySet());
+        set.stream()
+                .filter(f -> player.getChessSet().contains(f))
+                .forEach(f -> {
+                    figureCell.get(f).setFigureOn(null);
+                    figureCell.remove(f);
+                    figurePlayer.remove(f);
+                });
+
+        player.setChessSet(new ArrayList<>());
     }
 
     public void stepBack (StepForPlayer step) {

@@ -130,6 +130,8 @@ public class Game {
         Player curPlayer = curTeam.curPlayer();
 
         if (figurePlayer.get(chosenFigure) != curPlayer) return false;
+
+        ChessFigure beatenFigure = moveTo.getFigureOn();
         moveFigureTo(chosenFigure, moveTo, curStep);
 
         //сходили. следующий игрок
@@ -141,6 +143,14 @@ public class Game {
 
         curStep = new StepForPlayer();
         stepsForSave.clear();
+
+        if (beatenFigure != null) {
+            if (beatenFigure.getName() == ChessFigureName.KING) {
+
+                stepsForward.clear();
+                stepsForSave.clear();
+            }
+        }
         return true;
     }
 
@@ -159,6 +169,7 @@ public class Game {
         ChessCell moveFrom = figureCell.get(figure);
         ChessFigure beatenFigure = moveTo.getFigureOn();
 
+
         curStep.setMovedFigure(figure);
         curStep.setPlayer(figurePlayer.get(figure));
         curStep.setTo(moveTo);
@@ -173,6 +184,7 @@ public class Game {
         curStep.setBeatenFigure(beatenFigure);
         curStep.setBeatenPlayer(player);
         curStep.setBeatenFrom(figureCell.get(beatenFigure));
+
     }
 
 
@@ -181,6 +193,11 @@ public class Game {
         if (indexOfCurTeam == teams.size() - 1) indexOfCurTeam = 0;
         else indexOfCurTeam++;
         curTeam = teams.get(indexOfCurTeam);
+
+//        if (!containsKing(curTeam.curPlayer().getChessSet())) {
+//            if (!(curTeam.curPlayer().getChessSet().size() == 0))
+//                removeFiguresForPlayer(curTeam.curPlayer());
+//        }
 
 
         if (curTeam.curPlayer().getChessSet().size() == 0) {
@@ -217,6 +234,13 @@ public class Game {
         gameAct.step(step);
         nextTeam();
     }
+
+//    private boolean containsKing(Collection<ChessFigure> figures) {
+//        for (ChessFigure figure: figures) if (figure.getName() == ChessFigureName.KING) return true;
+//        return false;
+//    }
+
+
 
     public Team getCurTeam() {
         return curTeam;
